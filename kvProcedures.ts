@@ -41,12 +41,12 @@ export async function getAll() {
    const  cache = new Map()
    if (!db) await initDB()
    // we'll just rebuild our cache for each new client
-   const entries = db.list({ prefix: [] })
+   const entries = db.list({ prefix: ['todo'] })
    for await (const entry of entries) {
       cache.set(entry.key, entry.value)
    }
 
-   if (cache.size < 2) {
+   if (cache.size < 1) {
       await loadTestSet()
       const entries = db.list({ prefix: [] })
       for await (const entry of entries) {
