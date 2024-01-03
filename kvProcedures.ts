@@ -2,11 +2,11 @@
 
 const RunningOnDeploy = !!Deno.env.get("DENO_REGION")
 let db: Deno.Kv
-async function initDB() { 
-   db = (RunningOnDeploy) 
+async function initDB() {
+   db = (RunningOnDeploy)
       ? await Deno.openKv()
       : await Deno.openKv("./data/db.db")
-}   
+}
 
 
 /** delete a record */
@@ -38,7 +38,7 @@ export async function setRow(key: any[], value: any) {
 
 /** bulk fetch - get record collection */
 export async function getAll() {
-   const  cache = new Map()
+   const cache = new Map()
    if (!db) await initDB()
    // we'll just rebuild our cache for each new client
    const entries = db.list({ prefix: ['todo'] })
@@ -61,7 +61,7 @@ export async function clearAll() {
    if (!db) await initDB()
    getAllKeys()
       .then((keys) => {
-         keys.forEach( (key) => {
+         keys.forEach((key) => {
             db.delete(key)
          })
       })
@@ -80,12 +80,12 @@ export async function getAllKeys() {
 
 export async function loadTestSet() {
    if (!db) await initDB()
-   await db.set(["todo","app1"],`One`)
-   await db.set(["todo","topics"],`{"Edit Topics": [
-      { "name": "Todo App Topics", "value": "topics" }
-   ]`)
+   await db.set(["todo", "todoapp"], `[ { "text": "Fix this app.", "disabled": false } ]`)
+   //await db.set(["todo", "topics"], "[\n  {\n    \"text\": \"Topics\\nTodo App Topics,  key = topics\",\n    \"disabled\": false\n  }\n]")
+   //await db.set(["todo", "topics"], "[\n  {\n    \"text\": \"Topics\\nTodo App Topics,  key = topics\",\n    \"disabled\": false\n  },\n {\n \"text\": \"Topics\nTodo App Topics, key = topics\", \"disabled\": false }\n]")
+   await db.set(["todo", "topics"], "[\n  {\n    \"text\": \"Todo App\\nThis App, key = todoapp\",\n    \"disabled\": false\n  },\n  {\n    \"text\": \"Topics\\nTodo App Topics,  key = topics\",\n    \"disabled\": false\n  }\n]")
 }
- 
+
 /**
  * Fire an event reporting a DenoKv record mutation
  */
@@ -96,11 +96,11 @@ const fireMutationEvent = (key: any[], type: string) => {
 }
 
 // utility to bulk transfer kv rows
-export async function copyDB(from ='data.db', to = '') {
+export async function copyDB(from = 'data.db', to = '') {
 
    const fromDB = await Deno.openKv(from)
-   const toDB = (to.length > 0) 
-      ? await Deno.openKv(to) 
+   const toDB = (to.length > 0)
+      ? await Deno.openKv(to)
       : await Deno.openKv();
 
    const entries = fromDB.list({ prefix: [] })
