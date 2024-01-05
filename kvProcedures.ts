@@ -47,7 +47,7 @@ export async function getAll() {
    }
 
    if (cache.size < 1) {
-      await loadTestSet()
+      await loadInitialDataset()
       const entries = db.list({ prefix: [] })
       for await (const entry of entries) {
          cache.set(entry.key, entry.value)
@@ -78,12 +78,23 @@ export async function getAllKeys() {
    return allKeys
 }
 
-export async function loadTestSet() {
+// when no data was found, just persist a `basic` todo dataset,
+export async function loadInitialDataset() {
+   // ensure db connected
    if (!db) await initDB()
-   await db.set(["todo", "todoapp"], `[ { "text": "Fix this app.", "disabled": false } ]`)
-   //await db.set(["todo", "topics"], "[\n  {\n    \"text\": \"Topics\\nTodo App Topics,  key = topics\",\n    \"disabled\": false\n  }\n]")
-   //await db.set(["todo", "topics"], "[\n  {\n    \"text\": \"Topics\\nTodo App Topics,  key = topics\",\n    \"disabled\": false\n  },\n {\n \"text\": \"Topics\nTodo App Topics, key = topics\", \"disabled\": false }\n]")
-   await db.set(["todo", "topics"], "[\n  {\n    \"text\": \"Todo App\\nThis App, key = todoapp\",\n    \"disabled\": false\n  },\n  {\n    \"text\": \"Topics\\nTodo App Topics,  key = topics\",\n    \"disabled\": false\n  }\n]")
+   // an entry for the topic `My New Project` in the Select-Group `Projects` with key `proj1`
+   await db.set(["todo", "proj1"], `[ { "text": "Document this repo.", "disabled": false } ]`)
+
+   // an entry for the topic `This App` in the Select-Group `Todo App` with key `todoapp`  
+   await db.set(["todo", "todoapp"], `[ { "text": "Add more topics.", "disabled": false } ]`)
+
+   // Our `topics` record.  This allows us to add new topics to the Select list when needed
+   await db.set(["todo", "topics"], 
+   `[\n 
+      {\n \"text\": \"Projects\\nMy New Project, key = proj1\",\n \"disabled\": false\n  },\n  
+      {\n \"text\": \"Todo App\\nThis App, key = todoapp\",\n \"disabled\": false\n  },\n  
+      {\n \"text\": \"Topics\\nTodo App Topics,  key = topics\",\n \"disabled\": false\n  }\n]`
+   )
 }
 
 /**
