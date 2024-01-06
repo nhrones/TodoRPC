@@ -88,12 +88,13 @@ export async function loadInitialDataset() {
    // an entry for the topic `This App` in the Select-Group `Todo App` with key `todoapp`  
    await db.set(["todo", "todoapp"], `[ { "text": "Add more topics.", "disabled": false } ]`)
 
-   // Our `topics` record.  This allows us to add new topics to the Select list when needed
+   // Our `topics` record -  allows us to add new topics to the Select list when needed
+   // please note the newline and spacing in this JSON template string
    await db.set(["todo", "topics"], 
    `[\n 
-      {\n \"text\": \"Projects\\nMy New Project, key = proj1\",\n \"disabled\": false\n  },\n  
-      {\n \"text\": \"Todo App\\nThis App, key = todoapp\",\n \"disabled\": false\n  },\n  
-      {\n \"text\": \"Topics\\nTodo App Topics,  key = topics\",\n \"disabled\": false\n  }\n]`
+      {\n \"text\": \"Projects\\n   My New Project, key = proj1\",\n   \"disabled\": false\n  },\n  
+      {\n \"text\": \"Todo App\\n   This App, key = todoapp\",\n   \"disabled\": false\n  },\n  
+      {\n \"text\": \"Topics\\n   Todo App Topics,  key = topics\",\n   \"disabled\": false\n  }\n]`
    )
 }
 
