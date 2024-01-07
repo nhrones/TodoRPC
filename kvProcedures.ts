@@ -106,18 +106,3 @@ const fireMutationEvent = (key: any[], type: string) => {
    bc.postMessage({ txID: -1, procedure: "MUTATION", params: { key, type } })
    bc.close();
 }
-
-// utility to bulk transfer kv rows
-export async function copyDB(from = 'data.db', to = '') {
-
-   const fromDB = await Deno.openKv(from)
-   const toDB = (to.length > 0)
-      ? await Deno.openKv(to)
-      : await Deno.openKv();
-
-   const entries = fromDB.list({ prefix: [] })
-   for await (const entry of entries) {
-      await toDB.set(entry.key, entry.value);
-   }
-
-}

@@ -5,11 +5,10 @@
  * When an RPC-registration request is recieved, it will    
  * register an appropriate SSE stream for the client.   
  * 
- * The service also routes all POST requests to a broker service.  
- * This service will select a specific BroadcastChannel (BC), 
- * that will transmit the RPC-request to an appropriate RPC registrar, 
- * where the procedure request will be sent to be executed by the    
- * requested method.
+ * The service also routes all POST requests to a specific     
+ * BroadcastChannel (kvBC). This will transmit the RPC-request    
+ * to the RPC registrar, where the procedure request will be sent 
+ * to be executed by the requested method.
  */
 import { registerKVclient } from "./kvRegistration.ts";
 const kvBC = new BroadcastChannel("sse-kv-rpc");
@@ -30,7 +29,6 @@ Deno.serve({ port: 9099 }, (request: Request): Response | Promise<Response> => {
       // register our new RPC-client
       return registerKVclient(request, DEBUG)
    }
-
    // POST request = RPC (Remote Procedure Calls)    
    else if (request.method === 'POST') {
       kvBC.postMessage(request.json());
