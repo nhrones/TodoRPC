@@ -21,7 +21,7 @@ console.log(`DEBUG = ${DEBUG}, RunningOnDeploy = ${RunningOnDeploy}`)
 
 
 // Service all HTTP requests
-Deno.serve({ port: 9099 }, (request: Request): Response | Promise<Response> => {
+Deno.serve({ port: 9099 }, async (request: Request): Promise<Response> => {
 
    if (DEBUG) console.log('Servicing request for: ', request.url)
    // Is this a KV-rpc registration request?
@@ -31,7 +31,8 @@ Deno.serve({ port: 9099 }, (request: Request): Response | Promise<Response> => {
    }
    // POST request = RPC (Remote Procedure Calls)    
    else if (request.method === 'POST') {
-      kvBC.postMessage(request.json());
+      const data = await request.json();
+      kvBC.postMessage(data);
       // acknowledge the request 
       return new Response('', {
          status: 200, headers: {
