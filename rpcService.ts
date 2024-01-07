@@ -3,22 +3,19 @@
  * SSE-RPC Service server
  * This server watches for SSERPC registration requests.   
  * When an RPC-registration request is recieved, it will    
- * register an appropriate SSE stream for the client.   
+ * register an SSE stream for the client.   
  * 
  * The service also routes all POST requests to a specific     
  * BroadcastChannel (kvBC). This will transmit the RPC-request    
- * to the RPC registrar, where the procedure request will be sent 
- * to be executed by the requested method.
+ * to any listening RPC registrar, where the procedure request     
+ * will be sent to be executed by the requested method.
  */
 import { registerKVclient } from "./kvRegistration.ts";
 const kvBC = new BroadcastChannel("sse-kv-rpc");
 
-
 const RunningOnDeploy = !!Deno.env.get("DENO_REGION")
 const DEBUG = !!Deno.env.get("DEBUG")
 console.log(`DEBUG = ${DEBUG}, RunningOnDeploy = ${RunningOnDeploy}`)
-
-
 
 // Service all HTTP requests
 Deno.serve({ port: 9099 }, async (request: Request): Promise<Response> => {
